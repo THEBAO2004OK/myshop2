@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../models/product.dart';
-import 'product_detail_screen.dart';
 
 class ProductGridTile extends StatelessWidget {
   const ProductGridTile(this.product, {super.key});
@@ -24,11 +24,16 @@ class ProductGridTile extends StatelessWidget {
         ),
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => ProductDetailScreen(product)),
-            );
+            context.push('/products/${product.id}');
           },
-          child: Image.network(product.imageUrl, fit: BoxFit.cover),
+          child: Image.network(
+            product.imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => const ColoredBox(
+              color: Colors.black12,
+              child: Center(child: Icon(Icons.image_not_supported_outlined)),
+            ),
+          ),
         ),
       ),
     );

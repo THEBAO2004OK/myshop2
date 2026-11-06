@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-import 'ui/orders/orders_screen.dart';
+import 'ui/screens.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,6 +9,44 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  static final _router = GoRouter(
+    debugLogDiagnostics: true,
+    initialLocation: '/products',
+    routes: [
+      GoRoute(
+        path: '/products',
+        builder: (context, state) =>
+            const SafeArea(child: ProductsOverviewScreen()),
+      ),
+      GoRoute(
+        path: '/products/:productId',
+        builder: (context, state) {
+          final productId = state.pathParameters['productId']!;
+          final product = ProductsManager().findById(productId);
+          if (product == null) {
+            return const Scaffold(
+              body: Center(child: Text('Product not found')),
+            );
+          }
+          return SafeArea(child: ProductDetailScreen(product));
+        },
+      ),
+      GoRoute(
+        path: '/cart',
+        builder: (context, state) => const SafeArea(child: CartScreen()),
+      ),
+      GoRoute(
+        path: '/orders',
+        builder: (context, state) => const SafeArea(child: OrdersScreen()),
+      ),
+      GoRoute(
+        path: '/my-products',
+        builder: (context, state) =>
+            const SafeArea(child: UserProductsScreen()),
+      ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +76,11 @@ class MyApp extends StatelessWidget {
       ),
     );
 
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'MyShop',
       debugShowCheckedModeBanner: false,
       theme: themeData,
-      home: const SafeArea(child: OrdersScreen()),
+      routerConfig: _router,
     );
   }
 }
