@@ -21,20 +21,50 @@ class MyApp extends StatelessWidget {
       ),
       GoRoute(
         path: '/products/:productId',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final productId = state.pathParameters['productId']!;
           final product = ProductsManager().findById(productId);
           if (product == null) {
-            return const Scaffold(
-              body: Center(child: Text('Product not found')),
+            return const NoTransitionPage(
+              child: Scaffold(body: Center(child: Text('Product not found'))),
             );
           }
-          return SafeArea(child: ProductDetailScreen(product));
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: SafeArea(child: ProductDetailScreen(product)),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  final curvedAnimation = CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOutCubic,
+                  );
+                  final offsetAnimation = Tween<Offset>(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).animate(curvedAnimation);
+
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
+          );
         },
       ),
       GoRoute(
         path: '/cart',
-        builder: (context, state) => const SafeArea(child: CartScreen()),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SafeArea(child: CartScreen()),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final curvedAnimation = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOutCubic,
+            );
+
+            return FadeTransition(opacity: curvedAnimation, child: child);
+          },
+        ),
       ),
       GoRoute(
         path: '/orders',

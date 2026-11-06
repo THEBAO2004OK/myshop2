@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../models/product.dart';
 
@@ -22,6 +23,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       appBar: AppBar(
         title: const Text('Chi tiết sản phẩm'),
         leading: const BackButton(),
+        actions: [
+          IconButton(
+            tooltip: 'Trang chủ',
+            icon: const Icon(Icons.home_outlined),
+            onPressed: () => context.go('/products'),
+          ),
+          IconButton(
+            tooltip: 'Giỏ hàng',
+            icon: const Icon(Icons.shopping_cart_outlined),
+            onPressed: () => context.go('/cart'),
+          ),
+        ],
       ),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(22, 8, 22, 14),
